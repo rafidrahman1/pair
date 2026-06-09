@@ -98,6 +98,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 12),
                   SegmentedButton<UserRole>(
+                    emptySelectionAllowed: true,
                     segments: UserRole.values
                         .map(
                           (role) => ButtonSegment<UserRole>(
@@ -108,7 +109,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         .toList(),
                     selected: _selectedRole != null ? {_selectedRole!} : {},
                     onSelectionChanged: (selection) {
-                      setState(() => _selectedRole = selection.first);
+                      setState(
+                        () => _selectedRole =
+                            selection.isEmpty ? null : selection.first,
+                      );
                     },
                   ),
                   const Spacer(flex: 2),
