@@ -12,6 +12,9 @@ class AppConstants {
   static const Duration typingIndicatorTimeout = Duration(seconds: 3);
   static const Duration presenceHeartbeatInterval = Duration(seconds: 30);
 
+  /// Treat presence as stale if no heartbeat within this window (2x interval).
+  static const Duration presenceOfflineThreshold = Duration(seconds: 60);
+
   static const int chatPageSize = 30;
 
   static const String usersCollection = 'users';

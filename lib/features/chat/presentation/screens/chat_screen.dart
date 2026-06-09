@@ -16,13 +16,15 @@ class ChatScreen extends ConsumerStatefulWidget {
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
+  late final StateController<bool> _chatScreenActive;
 
   @override
   void initState() {
     super.initState();
+    _chatScreenActive = ref.read(chatScreenActiveProvider.notifier);
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(chatScreenActiveProvider.notifier).state = true;
+      _chatScreenActive.state = true;
     });
   }
 
@@ -35,7 +37,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   void dispose() {
-    ref.read(chatScreenActiveProvider.notifier).state = false;
+    _chatScreenActive.state = false;
+    _scrollController.removeListener(_onScroll);
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

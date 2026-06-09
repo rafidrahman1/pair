@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pair/core/constants/app_constants.dart';
 import 'package:pair/core/providers/firebase_providers.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
 import 'package:pair/features/pairing/presentation/providers/pairing_providers.dart';
@@ -14,6 +15,11 @@ final presenceRemoteDataSourceProvider = Provider<PresenceRemoteDataSource>((ref
 
 final presenceRepositoryProvider = Provider<PresenceRepository>((ref) {
   return PresenceRepositoryImpl(ref.watch(presenceRemoteDataSourceProvider));
+});
+
+/// Ticks periodically so stale online status is re-evaluated in the UI.
+final presenceStalenessTickerProvider = StreamProvider<void>((ref) {
+  return Stream.periodic(AppConstants.presenceHeartbeatInterval ~/ 2);
 });
 
 final spousePresenceProvider = StreamProvider<PresenceEntity?>((ref) {

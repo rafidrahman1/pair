@@ -26,10 +26,7 @@ class PresenceService with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addObserver(this);
     await _setOnline();
-    _heartbeatTimer = Timer.periodic(
-      AppConstants.presenceHeartbeatInterval,
-      (_) => _setOnline(),
-    );
+    _startHeartbeat();
   }
 
   Future<void> stop() async {
@@ -37,19 +34,37 @@ class PresenceService with WidgetsBindingObserver {
     _running = false;
 
     WidgetsBinding.instance.removeObserver(this);
-    _heartbeatTimer?.cancel();
-    _heartbeatTimer = null;
+    _stopHeartbeat();
     await _repository.setOffline(pairId: _pairId, uid: _userId);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _setOnline();
-    } else if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.detached) {
-      _repository.setOffline(pairId: _pairId, uid: _userId);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _setOnline();
+        _startHeartbeat();
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        _stopHeartbeat();
+        _repository.setOffline(pairId: _pairId, uid: _userId);
+      case AppLifecycleState.inactive:
+        break;
     }
+  }
+
+  void _startHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = Timer.periodic(
+      AppConstants.presenceHeartbeatInterval,
+      (_) => _setOnline(),
+    );
+  }
+
+  void _stopHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = null;
   }
 
   Future<void> _setOnline() async {

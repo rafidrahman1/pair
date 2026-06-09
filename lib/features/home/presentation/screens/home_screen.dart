@@ -97,6 +97,7 @@ class _PairedHome extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final spouseAsync = ref.watch(spouseUserProvider);
+    ref.watch(presenceStalenessTickerProvider);
     final presence = ref.watch(spousePresenceProvider).valueOrNull;
     final myLocation = ref.watch(myLocationProvider).valueOrNull;
     final spouseLocation = ref.watch(spouseLocationProvider).valueOrNull;
@@ -135,7 +136,7 @@ class _PairedHome extends ConsumerWidget {
               return _SpouseCard(
                 name: spouse.displayName,
                 photoUrl: spouse.photoUrl,
-                isOnline: presence?.online ?? false,
+                isOnline: presence?.isEffectivelyOnline ?? false,
                 lastSeen: presence?.lastSeen,
               );
             },
