@@ -10,11 +10,10 @@ class PairFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        // A foreground service keeps the process at IMPORTANCE_FOREGROUND, so
-        // Flutter routes FCM to onMessage in the main isolate. After swiping
-        // the app from recents that isolate is gone while the FGS keeps running.
-        // Show the notification natively whenever the UI is not alive.
-        if (PairActivityTracker.isActivityAlive) return
+        // The foreground service keeps the process alive, but Flutter may not
+        // receive FCM when the UI is backgrounded or swiped from recents.
+        // Fall back to native notifications whenever the app is not in front.
+        if (PairActivityTracker.isAppInForeground) return
 
         PairNotificationHelper.show(this, message)
     }

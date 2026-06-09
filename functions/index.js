@@ -51,6 +51,14 @@ exports.onNewMessage = onDocumentCreated(
       },
       android: {
         priority: 'high',
+        ttl: 86400,
+        collapseKey: 'pair_messages',
+        notification: {
+          channelId: 'pair_notifications',
+          priority: 'high',
+          defaultSound: true,
+          defaultVibrateTimings: true,
+        },
       },
       apns: {
         headers: {
@@ -108,6 +116,14 @@ exports.onGroceryItemCreated = onDocumentCreated(
       },
       android: {
         priority: 'high',
+        ttl: 86400,
+        collapseKey: 'pair_grocery',
+        notification: {
+          channelId: 'pair_notifications',
+          priority: 'high',
+          defaultSound: true,
+          defaultVibrateTimings: true,
+        },
       },
       apns: {
         headers: {

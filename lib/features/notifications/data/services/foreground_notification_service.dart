@@ -6,8 +6,9 @@ import 'package:pair/features/notifications/data/services/pair_foreground_task_h
 
 class ForegroundNotificationService {
   static const _serviceId = 1001;
-  static const _channelId = 'pair_foreground_service_silent';
+  static const _channelId = 'pair_foreground_service';
   static const _channelName = 'Pair Background';
+  static const _healthCheckIntervalMs = 5 * 60 * 1000;
 
   bool _initialized = false;
 
@@ -20,18 +21,21 @@ class ForegroundNotificationService {
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: _channelId,
         channelName: _channelName,
-        channelDescription: 'Keeps Pair running in the background.',
-        channelImportance: NotificationChannelImportance.MIN,
-        priority: NotificationPriority.MIN,
+        channelDescription: 'Keeps Pair running so notifications are never missed.',
+        channelImportance: NotificationChannelImportance.LOW,
+        priority: NotificationPriority.LOW,
         onlyAlertOnce: true,
-        visibility: NotificationVisibility.VISIBILITY_SECRET,
+        showWhen: false,
+        enableVibration: false,
+        playSound: false,
+        visibility: NotificationVisibility.VISIBILITY_PUBLIC,
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: false,
         playSound: false,
       ),
       foregroundTaskOptions: ForegroundTaskOptions(
-        eventAction: ForegroundTaskEventAction.nothing(),
+        eventAction: ForegroundTaskEventAction.repeat(_healthCheckIntervalMs),
         autoRunOnBoot: true,
         autoRunOnMyPackageReplaced: true,
         allowWakeLock: true,
@@ -51,7 +55,11 @@ class ForegroundNotificationService {
     await _requestAndroidPermissions();
 
     if (await FlutterForegroundTask.isRunningService) {
-      await FlutterForegroundTask.restartService();
+      await FlutterForegroundTask.updateService(
+        notificationTitle: foregroundNotificationTitle,
+        notificationText: foregroundNotificationText,
+        notificationIcon: foregroundNotificationIcon,
+      );
       return;
     }
 

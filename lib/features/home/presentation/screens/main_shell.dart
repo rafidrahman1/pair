@@ -6,7 +6,6 @@ import 'package:pair/features/chat/presentation/providers/chat_providers.dart';
 import 'package:pair/features/grocery/presentation/providers/grocery_providers.dart';
 import 'package:pair/features/health/presentation/providers/period_providers.dart';
 import 'package:pair/features/location/presentation/providers/location_providers.dart';
-import 'package:pair/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:pair/features/presence/presentation/providers/presence_providers.dart';
 import 'package:pair/router/route_paths.dart';
 
@@ -20,14 +19,6 @@ class MainShell extends ConsumerStatefulWidget {
 }
 
 class _MainShellState extends ConsumerState<MainShell> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(notificationInitProvider);
-    });
-  }
-
   int _selectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
     switch (location) {
@@ -49,7 +40,6 @@ class _MainShellState extends ConsumerState<MainShell> {
     ref.watch(proximityNotificationLifecycleProvider);
     ref.watch(groceryNotificationLifecycleProvider);
     ref.watch(chatNotificationLifecycleProvider);
-    ref.watch(foregroundNotificationLifecycleProvider);
     ref.watch(periodSyncLifecycleProvider);
 
     final user = ref.watch(currentUserStreamProvider).valueOrNull;

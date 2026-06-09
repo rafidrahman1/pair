@@ -8,6 +8,16 @@ class MainActivity : FlutterFragmentActivity() {
         PairActivityTracker.onActivityCreated(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        PairActivityTracker.onActivityResumed()
+    }
+
+    override fun onPause() {
+        PairActivityTracker.onActivityPaused()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         PairActivityTracker.onActivityDestroyed(this)
         super.onDestroy()

@@ -2,11 +2,11 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 const restoreForegroundServiceCommand = 'restore_foreground_service';
 
-// Minimal content keeps the required FGS notification out of the status bar.
-const foregroundNotificationTitle = '\u200B';
-const foregroundNotificationText = '\u200B';
+const foregroundNotificationTitle = 'Pair is active';
+const foregroundNotificationText =
+    'Staying connected so you never miss a message';
 const foregroundNotificationIcon = NotificationIcon(
-  metaDataName: 'com.redpanda.pair.service.NOTIFICATION_ICON_SILENT',
+  metaDataName: 'com.redpanda.pair.service.NOTIFICATION_ICON',
 );
 
 @pragma('vm:entry-point')
@@ -19,7 +19,15 @@ class PairForegroundTaskHandler extends TaskHandler {
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {}
 
   @override
-  void onRepeatEvent(DateTime timestamp) {}
+  void onRepeatEvent(DateTime timestamp) {
+    // Re-assert the ongoing notification so OEMs cannot silently drop it.
+    FlutterForegroundTask.updateService(
+      notificationTitle: foregroundNotificationTitle,
+      notificationText: foregroundNotificationText,
+      notificationIcon: foregroundNotificationIcon,
+    );
+    FlutterForegroundTask.sendDataToMain(restoreForegroundServiceCommand);
+  }
 
   @override
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {}

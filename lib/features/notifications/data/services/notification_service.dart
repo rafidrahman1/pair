@@ -53,7 +53,14 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
-    await _messaging.requestPermission();
+    await _messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: false,
+      provisional: false,
+      sound: true,
+    );
 
     const androidChannel = AndroidNotificationChannel(
       _channelId,

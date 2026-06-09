@@ -21,12 +21,12 @@ final notificationInitProvider = FutureProvider<void>((ref) async {
   await ref.watch(notificationServiceProvider).initialize();
 });
 
-/// Starts a persistent foreground notification when paired so the app stays alive.
+/// Starts a persistent foreground notification while signed in so the app stays alive.
 final foregroundNotificationLifecycleProvider = Provider<void>((ref) {
   final user = ref.watch(currentUserStreamProvider).valueOrNull;
   final service = ref.watch(foregroundNotificationServiceProvider);
 
-  if (user == null || !user.isPaired) {
+  if (user == null || !user.hasRole) {
     service.stop();
     return;
   }
