@@ -1,0 +1,62 @@
+name: pair
+description: Pair - A spouse-only app for live location sharing and real-time chat.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Firebase
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.3
+  cloud_firestore: ^5.6.7
+  firebase_messaging: ^15.2.5
+
+  # Google
+  google_sign_in: ^6.3.0
+  google_maps_flutter: ^2.12.1
+
+  # State & Navigation
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  go_router: ^15.1.2
+
+  # Serialization
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+  # Functional
+  fpdart: ^1.1.1
+
+  # Location & Device
+  geolocator: ^14.0.0
+  permission_handler: ^12.0.0+1
+  battery_plus: ^6.2.1
+
+  # Utilities
+  intl: ^0.20.2
+  uuid: ^4.5.1
+  connectivity_plus: ^6.1.4
+  cached_network_image: ^3.4.1
+  flutter_local_notifications: ^19.2.0
+  equatable: ^2.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.15
+  freezed: ^3.0.6
+  json_serializable: ^6.9.5
+  riverpod_generator: ^2.6.5
+  mocktail: ^1.0.4
+  fake_cloud_firestore: ^3.1.0
+
+flutter:
+  uses-material-design: true
