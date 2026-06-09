@@ -1,14 +1,12 @@
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:pair/core/theme/app_theme.dart';
 
 const restoreForegroundServiceCommand = 'restore_foreground_service';
 
-const foregroundNotificationTitle = 'Pair is active';
-const foregroundNotificationText =
-    'Listening for messages and updates from your spouse';
+// Minimal content keeps the required FGS notification out of the status bar.
+const foregroundNotificationTitle = '\u200B';
+const foregroundNotificationText = '\u200B';
 const foregroundNotificationIcon = NotificationIcon(
-  metaDataName: 'com.redpanda.pair.service.NOTIFICATION_ICON',
-  backgroundColor: AppColors.primary,
+  metaDataName: 'com.redpanda.pair.service.NOTIFICATION_ICON_SILENT',
 );
 
 @pragma('vm:entry-point')

@@ -46,6 +46,16 @@ exports.onNewMessage = onDocumentCreated(
         type: 'new_message',
         pairId,
         messageId,
+        title: senderName,
+        body: preview,
+      },
+      android: {
+        priority: 'high',
+      },
+      apns: {
+        headers: {
+          'apns-priority': '10',
+        },
       },
     });
   },
@@ -81,16 +91,28 @@ exports.onGroceryItemCreated = onDocumentCreated(
 
     const senderName = senderDoc.data()?.displayName ?? 'Your spouse';
 
+    const body = `Added "${text}" to the grocery list`;
+
     await getMessaging().send({
       token,
       notification: {
         title: senderName,
-        body: `Added "${text}" to the grocery list`,
+        body,
       },
       data: {
         type: 'new_grocery_item',
         pairId,
         itemId,
+        title: senderName,
+        body,
+      },
+      android: {
+        priority: 'high',
+      },
+      apns: {
+        headers: {
+          'apns-priority': '10',
+        },
       },
     });
   },

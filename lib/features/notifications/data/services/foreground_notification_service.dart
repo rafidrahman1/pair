@@ -6,8 +6,8 @@ import 'package:pair/features/notifications/data/services/pair_foreground_task_h
 
 class ForegroundNotificationService {
   static const _serviceId = 1001;
-  static const _channelId = 'pair_foreground_service';
-  static const _channelName = 'Pair Background Service';
+  static const _channelId = 'pair_foreground_service_silent';
+  static const _channelName = 'Pair Background';
 
   bool _initialized = false;
 
@@ -20,11 +20,11 @@ class ForegroundNotificationService {
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: _channelId,
         channelName: _channelName,
-        channelDescription:
-            'Keeps Pair running so you can receive messages and updates.',
-        channelImportance: NotificationChannelImportance.LOW,
-        priority: NotificationPriority.LOW,
+        channelDescription: 'Keeps Pair running in the background.',
+        channelImportance: NotificationChannelImportance.MIN,
+        priority: NotificationPriority.MIN,
         onlyAlertOnce: true,
+        visibility: NotificationVisibility.VISIBILITY_SECRET,
       ),
       iosNotificationOptions: const IOSNotificationOptions(
         showNotification: false,

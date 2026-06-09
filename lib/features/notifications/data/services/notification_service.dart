@@ -6,11 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pair/core/constants/app_constants.dart';
 import 'package:pair/features/auth/domain/repositories/auth_repository.dart';
-
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('Background message: ${message.messageId}');
-}
+import 'package:pair/features/notifications/data/services/notification_background.dart';
 
 enum NotificationType {
   newMessage,
@@ -37,15 +33,13 @@ class NotificationService {
   final FirebaseFirestore _firestore;
   final FlutterLocalNotificationsPlugin _localNotifications;
 
-  static const _channelId = 'pair_notifications';
-  static const _channelName = 'Pair Notifications';
+  static const _channelId = notificationChannelId;
+  static const _channelName = notificationChannelName;
   static const _dedupeWindow = Duration(seconds: 10);
 
   final Map<String, DateTime> _recentNotificationKeys = {};
 
   Future<void> initialize() async {
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
     const androidSettings =
         AndroidInitializationSettings('@drawable/ic_notification');
     const iosSettings = DarwinInitializationSettings();
