@@ -33,12 +33,10 @@ class _MainShellState extends ConsumerState<MainShell> {
     switch (location) {
       case RoutePaths.home:
         return 0;
-      case RoutePaths.map:
-        return 1;
       case RoutePaths.chat:
-        return 2;
+        return 1;
       case RoutePaths.profile:
-        return 3;
+        return 2;
       default:
         return 0;
     }
@@ -66,10 +64,8 @@ class _MainShellState extends ConsumerState<MainShell> {
                   case 0:
                     context.go(RoutePaths.home);
                   case 1:
-                    context.go(RoutePaths.map);
-                  case 2:
                     context.go(RoutePaths.chat);
-                  case 3:
+                  case 2:
                     context.go(RoutePaths.profile);
                 }
               },
@@ -78,11 +74,6 @@ class _MainShellState extends ConsumerState<MainShell> {
                   icon: Icon(Icons.home_outlined),
                   selectedIcon: Icon(Icons.home),
                   label: 'Home',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.map_outlined),
-                  selectedIcon: Icon(Icons.map),
-                  label: 'Map',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.chat_bubble_outline),

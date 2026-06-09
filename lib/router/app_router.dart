@@ -8,7 +8,6 @@ import 'package:pair/features/chat/presentation/screens/chat_screen.dart';
 import 'package:pair/features/grocery/presentation/screens/grocery_screen.dart';
 import 'package:pair/features/home/presentation/screens/home_screen.dart';
 import 'package:pair/features/home/presentation/screens/main_shell.dart';
-import 'package:pair/features/location/presentation/screens/map_screen.dart';
 import 'package:pair/features/pairing/presentation/screens/pairing_screen.dart';
 import 'package:pair/features/profile/presentation/screens/profile_screen.dart';
 import 'package:pair/router/route_paths.dart';
@@ -82,10 +81,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.home,
             pageBuilder: (context, state) => _fadePage(state, const HomeScreen()),
-          ),
-          GoRoute(
-            path: RoutePaths.map,
-            pageBuilder: (context, state) => _fadePage(state, const MapScreen()),
           ),
           GoRoute(
             path: RoutePaths.chat,

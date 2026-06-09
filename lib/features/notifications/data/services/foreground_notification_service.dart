@@ -14,6 +14,8 @@ class ForegroundNotificationService {
   Future<void> initialize() async {
     if (_initialized) return;
 
+    FlutterForegroundTask.addTaskDataCallback(_onTaskData);
+
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: _channelId,
@@ -34,6 +36,8 @@ class ForegroundNotificationService {
         autoRunOnMyPackageReplaced: true,
         allowWakeLock: true,
         allowWifiLock: true,
+        allowAutoRestart: true,
+        stopWithTask: false,
       ),
     );
 
@@ -54,9 +58,9 @@ class ForegroundNotificationService {
     final result = await FlutterForegroundTask.startService(
       serviceId: _serviceId,
       serviceTypes: const [ForegroundServiceTypes.remoteMessaging],
-      notificationTitle: 'Pair is active',
-      notificationText: 'Listening for messages and updates from your spouse',
-      notificationIcon: null,
+      notificationTitle: foregroundNotificationTitle,
+      notificationText: foregroundNotificationText,
+      notificationIcon: foregroundNotificationIcon,
       notificationInitialRoute: '/',
       callback: pairForegroundTaskCallback,
     );
@@ -82,6 +86,12 @@ class ForegroundNotificationService {
 
     if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
       await FlutterForegroundTask.requestIgnoreBatteryOptimization();
+    }
+  }
+
+  void _onTaskData(Object data) {
+    if (data == restoreForegroundServiceCommand) {
+      start();
     }
   }
 }

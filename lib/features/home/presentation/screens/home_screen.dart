@@ -152,7 +152,6 @@ class _PairedHome extends ConsumerWidget {
           _LocationCard(
             myLocation: myLocation,
             spouseLocation: spouseLocation,
-            onTap: () => context.go(RoutePaths.map),
           ),
           const SizedBox(height: 16),
           _ChatPreviewCard(
@@ -254,12 +253,10 @@ class _LocationCard extends StatelessWidget {
   const _LocationCard({
     required this.myLocation,
     required this.spouseLocation,
-    required this.onTap,
   });
 
   final dynamic myLocation;
   final dynamic spouseLocation;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -275,42 +272,36 @@ class _LocationCard extends StatelessWidget {
     }
 
     return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.location_on, color: AppColors.primary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Location',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                distanceText,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              if (spouseLocation != null) ...[
-                const SizedBox(height: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.location_on, color: AppColors.primary),
+                const SizedBox(width: 8),
                 Text(
-                  'Spouse updated ${DateFormatter.relative(spouseLocation.updatedAt)}',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  'Location',
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              distanceText,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            if (spouseLocation != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Spouse updated ${DateFormatter.relative(spouseLocation.updatedAt)}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
