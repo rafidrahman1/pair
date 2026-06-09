@@ -113,6 +113,18 @@ service cloud.firestore {
         allow read: if isPairedMember(pairId);
         allow write: if isPairedMember(pairId) && request.auth.uid == uid;
       }
+
+      match /groceryItems/{itemId} {
+        allow read: if isPairedMember(pairId);
+        allow create: if isPairedMember(pairId) &&
+          request.resource.data.addedBy == request.auth.uid;
+        allow update, delete: if isPairedMember(pairId);
+      }
+
+      match /periodData/{uid} {
+        allow read: if isPairedMember(pairId);
+        allow write: if isPairedMember(pairId) && request.auth.uid == uid;
+      }
     }
   }
 }

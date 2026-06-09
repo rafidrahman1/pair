@@ -18,4 +18,9 @@ class AppConstants {
   static const String presenceSubcollection = 'presence';
   static const String typingSubcollection = 'typing';
   static const String readStatusSubcollection = 'readStatus';
+  static const String groceryItemsSubcollection = 'groceryItems';
+  static const String periodDataSubcollection = 'periodData';
+
+  static const Duration periodSyncInterval = Duration(hours: 1);
+  static const int periodLookbackDays = 90;
 }

@@ -3,6 +3,7 @@ import 'package:pair/core/errors/failure.dart';
 import 'package:pair/core/result/result.dart';
 import 'package:pair/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:pair/features/auth/domain/entities/user_entity.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 import 'package:pair/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -40,9 +41,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<UserEntity>> signInWithGoogle() async {
+  Future<Result<UserEntity>> signInWithGoogle({required UserRole role}) async {
     try {
-      final user = await _dataSource.signInWithGoogle();
+      final user = await _dataSource.signInWithGoogle(role: role);
       return success(user.toEntity());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'sign-in-cancelled') {

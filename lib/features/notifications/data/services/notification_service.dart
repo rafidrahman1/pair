@@ -14,6 +14,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 enum NotificationType {
   newMessage,
+  newGroceryItem,
   pairAccepted,
   spouseOnline,
 }
@@ -37,6 +38,9 @@ class NotificationService {
 
   static const _channelId = 'pair_notifications';
   static const _channelName = 'Pair Notifications';
+  static const _dedupeWindow = Duration(seconds: 10);
+
+  final Map<String, DateTime> _recentNotificationKeys = {};
 
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
@@ -89,15 +93,47 @@ class NotificationService {
     final notification = message.notification;
     if (notification == null) return;
 
-    _showLocalNotification(
+    final dedupeKey = _dedupeKeyForMessage(message.data);
+    showLocalNotification(
       title: notification.title ?? 'Pair',
       body: notification.body ?? '',
       payload: jsonEncode(message.data),
+      dedupeKey: dedupeKey,
     );
   }
 
   void _handleMessageOpened(RemoteMessage message) {
     debugPrint('Message opened: ${message.data}');
+  }
+
+  bool _shouldSkipDuplicate(String dedupeKey) {
+    final lastShown = _recentNotificationKeys[dedupeKey];
+    if (lastShown == null) return false;
+
+    return DateTime.now().difference(lastShown) < _dedupeWindow;
+  }
+
+  void _markNotificationShown(String dedupeKey) {
+    _recentNotificationKeys[dedupeKey] = DateTime.now();
+    _recentNotificationKeys.removeWhere(
+      (_, shownAt) => DateTime.now().difference(shownAt) > _dedupeWindow,
+    );
+  }
+
+  Future<void> showLocalNotification({
+    required String title,
+    required String body,
+    String? payload,
+    String? dedupeKey,
+  }) async {
+    if (dedupeKey != null && _shouldSkipDuplicate(dedupeKey)) return;
+    if (dedupeKey != null) _markNotificationShown(dedupeKey);
+
+    await _showLocalNotification(
+      title: title,
+      body: body,
+      payload: payload,
+    );
   }
 
   Future<void> _showLocalNotification({
@@ -144,20 +180,20 @@ class NotificationService {
   }
 
   Future<void> notifyNewMessage({
-    required String recipientUid,
     required String senderName,
     required String messagePreview,
     required String pairId,
+    required String messageId,
   }) async {
-    await sendToUser(
-      recipientUid: recipientUid,
-      type: NotificationType.newMessage,
+    await showLocalNotification(
       title: senderName,
       body: messagePreview,
-      data: {
+      payload: jsonEncode({
         'type': 'new_message',
         'pairId': pairId,
-      },
+        'messageId': messageId,
+      }),
+      dedupeKey: 'message_$messageId',
     );
   }
 
@@ -175,6 +211,37 @@ class NotificationService {
         'type': 'pair_accepted',
         'pairId': pairId,
       },
+    );
+  }
+
+  String? _dedupeKeyForMessage(Map<String, dynamic> data) {
+    final type = data['type'] as String?;
+    if (type == 'new_grocery_item') {
+      final itemId = data['itemId'] as String?;
+      if (itemId != null) return 'grocery_$itemId';
+    }
+    if (type == 'new_message') {
+      final messageId = data['messageId'] as String?;
+      if (messageId != null) return 'message_$messageId';
+    }
+    return null;
+  }
+
+  Future<void> notifyNewGroceryItem({
+    required String senderName,
+    required String itemText,
+    required String pairId,
+    required String itemId,
+  }) async {
+    await showLocalNotification(
+      title: senderName,
+      body: 'Added "$itemText" to the grocery list',
+      payload: jsonEncode({
+        'type': 'new_grocery_item',
+        'pairId': pairId,
+        'itemId': itemId,
+      }),
+      dedupeKey: 'grocery_$itemId',
     );
   }
 

@@ -3,21 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pair/core/theme/app_theme.dart';
 import 'package:pair/core/widgets/loading_overlay.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
 import 'package:pair/router/route_paths.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  UserRole? _selectedRole;
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
     final isLoading = authState.isLoading;
+    final canSignIn = _selectedRole != null && !isLoading;
 
     ref.listen(authControllerProvider, (previous, next) {
       next.whenOrNull(
         data: (user) {
-          if (user != null && context.mounted) {
+          if (user != null && user.hasRole && context.mounted) {
             context.go(RoutePaths.home);
           }
         },
@@ -82,13 +91,33 @@ class LoginScreen extends ConsumerWidget {
                           height: 1.5,
                         ),
                   ),
-                  const Spacer(flex: 3),
+                  const Spacer(flex: 2),
+                  Text(
+                    'I am the',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 12),
+                  SegmentedButton<UserRole>(
+                    segments: UserRole.values
+                        .map(
+                          (role) => ButtonSegment<UserRole>(
+                            value: role,
+                            label: Text(role.label),
+                          ),
+                        )
+                        .toList(),
+                    selected: _selectedRole != null ? {_selectedRole!} : {},
+                    onSelectionChanged: (selection) {
+                      setState(() => _selectedRole = selection.first);
+                    },
+                  ),
+                  const Spacer(flex: 2),
                   FilledButton.icon(
-                    onPressed: isLoading
-                        ? null
-                        : () => ref
+                    onPressed: canSignIn
+                        ? () => ref
                             .read(authControllerProvider.notifier)
-                            .signInWithGoogle(),
+                            .signInWithGoogle(role: _selectedRole!)
+                        : null,
                     icon: Image.network(
                       'https://www.google.com/favicon.ico',
                       width: 20,

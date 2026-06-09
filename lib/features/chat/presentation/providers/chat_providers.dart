@@ -6,6 +6,8 @@ import 'package:pair/core/providers/firebase_providers.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
 import 'package:pair/features/chat/data/datasources/chat_remote_datasource.dart';
 import 'package:pair/features/chat/data/repositories/chat_repository_impl.dart';
+import 'package:pair/features/chat/data/services/chat_notification_service.dart';
+import 'package:pair/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:pair/features/chat/domain/entities/message_entity.dart';
 import 'package:pair/features/chat/domain/entities/typing_entity.dart';
 import 'package:pair/features/chat/domain/repositories/chat_repository.dart';
@@ -233,3 +235,38 @@ final chatControllerProvider =
     StateNotifierProvider<ChatController, AsyncValue<List<MessageEntity>>>(
   ChatController.new,
 );
+
+/// True while the chat screen is visible (suppresses local message notifications).
+final chatScreenActiveProvider = StateProvider<bool>((ref) => false);
+
+final chatNotificationServiceProvider =
+    Provider<ChatNotificationService?>((ref) {
+  final user = ref.watch(currentUserStreamProvider).valueOrNull;
+  final pair = ref.watch(currentPairProvider).valueOrNull;
+
+  if (user == null || pair == null || !user.isPaired) {
+    return null;
+  }
+
+  final spouseId = pair.spouseId(user.uid);
+  if (spouseId.isEmpty) return null;
+
+  return ChatNotificationService(
+    repository: ref.watch(chatRepositoryProvider),
+    notificationService: ref.watch(notificationServiceProvider),
+    authDataSource: ref.watch(authRemoteDataSourceProvider),
+    pairId: pair.id,
+    spouseId: spouseId,
+    isChatScreenActive: () => ref.read(chatScreenActiveProvider),
+  );
+});
+
+/// Notifies the user when their spouse sends a chat message.
+final chatNotificationLifecycleProvider = Provider<void>((ref) {
+  ref.watch(notificationInitProvider);
+  final service = ref.watch(chatNotificationServiceProvider);
+  if (service == null) return;
+
+  service.start();
+  ref.onDispose(service.stop);
+});

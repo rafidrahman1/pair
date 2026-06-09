@@ -16,7 +16,7 @@ class SplashScreen extends ConsumerWidget {
       loading: () {},
       error: (_, _) => context.go(RoutePaths.login),
       data: (user) {
-        if (user != null) {
+        if (user != null && user.hasRole) {
           context.go(RoutePaths.home);
         } else {
           context.go(RoutePaths.login);
@@ -41,9 +41,13 @@ class SplashScreen extends ConsumerWidget {
       _navigate(context, next);
     });
 
-    if (!isLoading && resolvedUser != null) {
+    if (!isLoading && resolvedUser != null && resolvedUser.hasRole) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) context.go(RoutePaths.home);
+      });
+    } else if (!isLoading && resolvedUser != null && !resolvedUser.hasRole) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.go(RoutePaths.login);
       });
     } else if (!isLoading && resolvedUser == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -37,6 +37,10 @@ final class PermissionFailure extends Failure {
   const PermissionFailure(super.message);
 }
 
+final class HealthFailure extends Failure {
+  const HealthFailure(super.message);
+}
+
 final class UnknownFailure extends Failure {
   const UnknownFailure([super.message = 'An unexpected error occurred']);
 }

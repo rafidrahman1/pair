@@ -21,6 +21,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatScreenActiveProvider.notifier).state = true;
+    });
   }
 
   void _onScroll() {
@@ -32,6 +35,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   void dispose() {
+    ref.read(chatScreenActiveProvider.notifier).state = false;
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

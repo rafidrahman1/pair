@@ -3,6 +3,7 @@ import 'package:pair/core/providers/firebase_providers.dart';
 import 'package:pair/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:pair/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:pair/features/auth/domain/entities/user_entity.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 import 'package:pair/features/auth/domain/repositories/auth_repository.dart';
 import 'package:pair/features/auth/domain/usecases/get_current_user.dart';
 import 'package:pair/features/auth/domain/usecases/sign_in_with_google.dart';
@@ -43,9 +44,9 @@ class AuthController extends AsyncNotifier<UserEntity?> {
     return result.fold((_) => null, (user) => user);
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle({required UserRole role}) async {
     state = const AsyncLoading();
-    final result = await ref.read(signInWithGoogleProvider)();
+    final result = await ref.read(signInWithGoogleProvider)(role: role);
     state = result.fold(
       (failure) => AsyncError(failure, StackTrace.current),
       (user) {

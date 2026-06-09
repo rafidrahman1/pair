@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserModel {
 
- String get uid; String get displayName; String get email; String get photoUrl; String? get pairId; String? get fcmToken;@TimestampConverter() DateTime get createdAt;@TimestampConverter() DateTime get updatedAt;
+ String get uid; String get displayName; String get email; String get photoUrl;@UserRoleConverter() UserRole? get role; String? get pairId; String? get fcmToken;@TimestampConverter() DateTime get createdAt;@TimestampConverter() DateTime get updatedAt;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserModelCopyWith<UserModel> get copyWith => _$UserModelCopyWithImpl<UserModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.pairId, pairId) || other.pairId == pairId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.role, role) || other.role == role)&&(identical(other.pairId, pairId) || other.pairId == pairId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,displayName,email,photoUrl,pairId,fcmToken,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,uid,displayName,email,photoUrl,role,pairId,fcmToken,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'UserModel(uid: $uid, displayName: $displayName, email: $email, photoUrl: $photoUrl, pairId: $pairId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'UserModel(uid: $uid, displayName: $displayName, email: $email, photoUrl: $photoUrl, role: $role, pairId: $pairId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
- String uid, String displayName, String email, String photoUrl, String? pairId, String? fcmToken,@TimestampConverter() DateTime createdAt,@TimestampConverter() DateTime updatedAt
+ String uid, String displayName, String email, String photoUrl,@UserRoleConverter() UserRole? role, String? pairId, String? fcmToken,@TimestampConverter() DateTime createdAt,@TimestampConverter() DateTime updatedAt
 });
 
 
@@ -65,13 +65,14 @@ class _$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? displayName = null,Object? email = null,Object? photoUrl = null,Object? pairId = freezed,Object? fcmToken = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? displayName = null,Object? email = null,Object? photoUrl = null,Object? role = freezed,Object? pairId = freezed,Object? fcmToken = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,photoUrl: null == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
-as String,pairId: freezed == pairId ? _self.pairId : pairId // ignore: cast_nullable_to_non_nullable
+as String,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as UserRole?,pairId: freezed == pairId ? _self.pairId : pairId // ignore: cast_nullable_to_non_nullable
 as String?,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String displayName,  String email,  String photoUrl,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String uid,  String displayName,  String email,  String photoUrl, @UserRoleConverter()  UserRole? role,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.role,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pai
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String displayName,  String email,  String photoUrl,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String uid,  String displayName,  String email,  String photoUrl, @UserRoleConverter()  UserRole? role,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
-return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.role,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pai
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String displayName,  String email,  String photoUrl,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String uid,  String displayName,  String email,  String photoUrl, @UserRoleConverter()  UserRole? role,  String? pairId,  String? fcmToken, @TimestampConverter()  DateTime createdAt, @TimestampConverter()  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.role,_that.pairId,_that.fcmToken,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -216,13 +217,14 @@ return $default(_that.uid,_that.displayName,_that.email,_that.photoUrl,_that.pai
 @JsonSerializable()
 
 class _UserModel extends UserModel {
-  const _UserModel({required this.uid, required this.displayName, required this.email, this.photoUrl = '', this.pairId, this.fcmToken, @TimestampConverter() required this.createdAt, @TimestampConverter() required this.updatedAt}): super._();
+  const _UserModel({required this.uid, required this.displayName, required this.email, this.photoUrl = '', @UserRoleConverter() this.role, this.pairId, this.fcmToken, @TimestampConverter() required this.createdAt, @TimestampConverter() required this.updatedAt}): super._();
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override final  String uid;
 @override final  String displayName;
 @override final  String email;
 @override@JsonKey() final  String photoUrl;
+@override@UserRoleConverter() final  UserRole? role;
 @override final  String? pairId;
 @override final  String? fcmToken;
 @override@TimestampConverter() final  DateTime createdAt;
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.pairId, pairId) || other.pairId == pairId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.email, email) || other.email == email)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl)&&(identical(other.role, role) || other.role == role)&&(identical(other.pairId, pairId) || other.pairId == pairId)&&(identical(other.fcmToken, fcmToken) || other.fcmToken == fcmToken)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,displayName,email,photoUrl,pairId,fcmToken,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,uid,displayName,email,photoUrl,role,pairId,fcmToken,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'UserModel(uid: $uid, displayName: $displayName, email: $email, photoUrl: $photoUrl, pairId: $pairId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'UserModel(uid: $uid, displayName: $displayName, email: $email, photoUrl: $photoUrl, role: $role, pairId: $pairId, fcmToken: $fcmToken, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
- String uid, String displayName, String email, String photoUrl, String? pairId, String? fcmToken,@TimestampConverter() DateTime createdAt,@TimestampConverter() DateTime updatedAt
+ String uid, String displayName, String email, String photoUrl,@UserRoleConverter() UserRole? role, String? pairId, String? fcmToken,@TimestampConverter() DateTime createdAt,@TimestampConverter() DateTime updatedAt
 });
 
 
@@ -278,13 +280,14 @@ class __$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? displayName = null,Object? email = null,Object? photoUrl = null,Object? pairId = freezed,Object? fcmToken = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? displayName = null,Object? email = null,Object? photoUrl = null,Object? role = freezed,Object? pairId = freezed,Object? fcmToken = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_UserModel(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,photoUrl: null == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
-as String,pairId: freezed == pairId ? _self.pairId : pairId // ignore: cast_nullable_to_non_nullable
+as String,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as UserRole?,pairId: freezed == pairId ? _self.pairId : pairId // ignore: cast_nullable_to_non_nullable
 as String?,fcmToken: freezed == fcmToken ? _self.fcmToken : fcmToken // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pair/features/chat/presentation/providers/chat_providers.dart';
+import 'package:pair/features/grocery/presentation/providers/grocery_providers.dart';
+import 'package:pair/features/health/presentation/providers/period_providers.dart';
 import 'package:pair/features/location/presentation/providers/location_providers.dart';
 import 'package:pair/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:pair/features/presence/presentation/providers/presence_providers.dart';
@@ -45,6 +48,10 @@ class _MainShellState extends ConsumerState<MainShell> {
   Widget build(BuildContext context) {
     ref.watch(presenceServiceLifecycleProvider);
     ref.watch(locationServiceLifecycleProvider);
+    ref.watch(groceryNotificationLifecycleProvider);
+    ref.watch(chatNotificationLifecycleProvider);
+    ref.watch(foregroundNotificationLifecycleProvider);
+    ref.watch(periodSyncLifecycleProvider);
 
     final user = ref.watch(currentUserStreamProvider).valueOrNull;
     final showNav = user?.isPaired ?? false;

@@ -6,8 +6,13 @@ import 'package:pair/core/theme/app_theme.dart';
 import 'package:pair/core/utils/date_formatter.dart';
 import 'package:pair/core/utils/distance_calculator.dart';
 import 'package:pair/core/widgets/skeleton_loader.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
+import 'package:pair/features/health/domain/entities/period_data_entity.dart';
+import 'package:pair/features/health/presentation/providers/period_providers.dart';
 import 'package:pair/features/chat/presentation/providers/chat_providers.dart';
+import 'package:pair/features/grocery/domain/entities/grocery_item_entity.dart';
+import 'package:pair/features/grocery/presentation/providers/grocery_providers.dart';
 import 'package:pair/features/location/presentation/providers/location_providers.dart';
 import 'package:pair/features/presence/presentation/providers/presence_providers.dart';
 import 'package:pair/features/profile/presentation/providers/profile_providers.dart';
@@ -96,6 +101,11 @@ class _PairedHome extends ConsumerWidget {
     final spouseLocation = ref.watch(spouseLocationProvider).valueOrNull;
     final messages = ref.watch(messagesStreamProvider).valueOrNull ?? [];
     final unread = ref.watch(unreadCountProvider).valueOrNull ?? 0;
+    final groceryItems = ref.watch(groceryItemsStreamProvider).valueOrNull ?? [];
+    final groceryUnchecked =
+        ref.watch(groceryUncheckedCountProvider).valueOrNull ?? 0;
+    final user = ref.watch(currentUserStreamProvider).valueOrNull;
+    final periodData = ref.watch(wifePeriodDataProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -148,6 +158,20 @@ class _PairedHome extends ConsumerWidget {
             lastMessage: messages.isNotEmpty ? messages.first : null,
             unreadCount: unread,
             onTap: () => context.go(RoutePaths.chat),
+          ),
+          const SizedBox(height: 16),
+          if (user?.role == UserRole.husband || user?.role == UserRole.wife)
+            ...[
+              _PeriodCard(
+                periodData: periodData,
+                isWife: user?.role == UserRole.wife,
+              ),
+              const SizedBox(height: 16),
+            ],
+          _GroceryPreviewCard(
+            items: groceryItems,
+            uncheckedCount: groceryUnchecked,
+            onTap: () => context.push(RoutePaths.grocery),
           ),
         ],
       ),
@@ -284,6 +308,165 @@ class _LocationCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PeriodCard extends StatelessWidget {
+  const _PeriodCard({
+    required this.periodData,
+    required this.isWife,
+  });
+
+  final PeriodDataEntity? periodData;
+  final bool isWife;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = isWife ? 'Period (shared with spouse)' : 'Her period';
+
+    if (periodData == null) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.favorite_outline, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                isWife
+                    ? 'Connect Health Connect and log period data to share with your spouse.'
+                    : 'Period data will appear here once your wife syncs from Health Connect.',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final statusText = periodData!.isOnPeriod ? 'On period' : 'Not on period';
+    final flowText = _formatFlow(periodData!.currentFlow);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.favorite_outline, color: AppColors.primary),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              statusText,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            if (flowText != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Flow: $flowText',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+            if (periodData!.lastPeriodStart != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Cycle started ${DateFormatter.relative(periodData!.lastPeriodStart!)}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+            const SizedBox(height: 4),
+            Text(
+              'Updated ${DateFormatter.relative(periodData!.updatedAt)}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String? _formatFlow(String? flow) {
+    if (flow == null || flow.isEmpty) return null;
+    return flow[0].toUpperCase() + flow.substring(1);
+  }
+}
+
+class _GroceryPreviewCard extends StatelessWidget {
+  const _GroceryPreviewCard({
+    required this.items,
+    required this.uncheckedCount,
+    required this.onTap,
+  });
+
+  final List<GroceryItemEntity> items;
+  final int uncheckedCount;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final uncheckedItems = items.where((item) => !item.isChecked).toList();
+    final previewText = uncheckedItems.isNotEmpty
+        ? uncheckedItems.take(3).map((item) => item.text).join(', ')
+        : items.isNotEmpty
+            ? 'All items checked off'
+            : 'No items yet';
+
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.shopping_cart_outlined, color: AppColors.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Grocery List',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const Spacer(),
+                  if (uncheckedCount > 0)
+                    Badge(label: Text('$uncheckedCount')),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                previewText,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ],
           ),
         ),

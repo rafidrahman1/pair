@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pair/features/auth/domain/entities/user_entity.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
@@ -14,6 +15,7 @@ abstract class UserModel with _$UserModel {
     required String displayName,
     required String email,
     @Default('') String photoUrl,
+    @UserRoleConverter() UserRole? role,
     String? pairId,
     String? fcmToken,
     @TimestampConverter() required DateTime createdAt,
@@ -33,6 +35,7 @@ abstract class UserModel with _$UserModel {
         displayName: displayName,
         email: email,
         photoUrl: photoUrl,
+        role: role,
         pairId: pairId,
         fcmToken: fcmToken,
         createdAt: createdAt,

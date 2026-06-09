@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:pair/core/constants/app_constants.dart';
 import 'package:pair/features/auth/data/models/user_model.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 
 class AuthRemoteDataSource {
   AuthRemoteDataSource({
@@ -21,7 +22,7 @@ class AuthRemoteDataSource {
 
   User? get currentFirebaseUser => _firebaseAuth.currentUser;
 
-  Future<UserModel> signInWithGoogle() async {
+  Future<UserModel> signInWithGoogle({required UserRole role}) async {
     await _googleSignIn.signOut();
 
     final googleUser = await _googleSignIn.signIn();
@@ -47,7 +48,7 @@ class AuthRemoteDataSource {
       );
     }
 
-    return _syncUserDocument(firebaseUser);
+    return _syncUserDocument(firebaseUser, role: role);
   }
 
   Future<void> signOut() async {
@@ -68,7 +69,7 @@ class AuthRemoteDataSource {
 
     await firebaseUser.reload();
     final refreshedUser = _firebaseAuth.currentUser!;
-    return _syncUserDocument(refreshedUser);
+    return _syncUserDocument(refreshedUser, role: null);
   }
 
   Future<UserModel?> getUserDocument(String uid) async {
@@ -88,7 +89,10 @@ class AuthRemoteDataSource {
     });
   }
 
-  Future<UserModel> _syncUserDocument(User firebaseUser) async {
+  Future<UserModel> _syncUserDocument(
+    User firebaseUser, {
+    required UserRole? role,
+  }) async {
     final docRef =
         _firestore.collection(AppConstants.usersCollection).doc(firebaseUser.uid);
     final doc = await docRef.get();
@@ -100,6 +104,7 @@ class AuthRemoteDataSource {
         displayName: firebaseUser.displayName ?? existing.displayName,
         email: firebaseUser.email ?? existing.email,
         photoUrl: firebaseUser.photoURL ?? existing.photoUrl,
+        role: existing.role ?? role,
         updatedAt: now,
       );
       await docRef.update(updated.toFirestore());
@@ -111,6 +116,7 @@ class AuthRemoteDataSource {
       displayName: firebaseUser.displayName ?? 'User',
       email: firebaseUser.email ?? '',
       photoUrl: firebaseUser.photoURL ?? '',
+      role: role,
       createdAt: now,
       updatedAt: now,
     );

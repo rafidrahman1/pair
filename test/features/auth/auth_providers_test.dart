@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:pair/core/errors/failure.dart';
 import 'package:pair/core/result/result.dart';
 import 'package:pair/features/auth/domain/entities/user_entity.dart';
+import 'package:pair/features/auth/domain/entities/user_role.dart';
 import 'package:pair/features/auth/domain/repositories/auth_repository.dart';
 import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
 
@@ -17,16 +18,21 @@ void main() {
     displayName: 'Test User',
     email: 'test@example.com',
     photoUrl: '',
+    role: UserRole.husband,
     createdAt: DateTime(2024),
     updatedAt: DateTime(2024),
   );
+
+  setUpAll(() {
+    registerFallbackValue(UserRole.husband);
+  });
 
   setUp(() {
     mockRepository = MockAuthRepository();
   });
 
   test('AuthController signInWithGoogle updates state on success', () async {
-    when(() => mockRepository.signInWithGoogle())
+    when(() => mockRepository.signInWithGoogle(role: any(named: 'role')))
         .thenAnswer((_) async => success(testUser));
     when(() => mockRepository.getCurrentUser())
         .thenAnswer((_) async => success(testUser));
@@ -41,7 +47,7 @@ void main() {
     addTearDown(container.dispose);
 
     final controller = container.read(authControllerProvider.notifier);
-    await controller.signInWithGoogle();
+    await controller.signInWithGoogle(role: UserRole.husband);
 
     final state = container.read(authControllerProvider);
     expect(state.hasValue, true);
@@ -49,7 +55,7 @@ void main() {
   });
 
   test('AuthController signInWithGoogle sets error on failure', () async {
-    when(() => mockRepository.signInWithGoogle()).thenAnswer(
+    when(() => mockRepository.signInWithGoogle(role: any(named: 'role'))).thenAnswer(
       (_) async => failure(const AuthFailure('Sign in failed')),
     );
     when(() => mockRepository.getCurrentUser())
@@ -65,7 +71,7 @@ void main() {
     addTearDown(container.dispose);
 
     final controller = container.read(authControllerProvider.notifier);
-    await controller.signInWithGoogle();
+    await controller.signInWithGoogle(role: UserRole.wife);
 
     final state = container.read(authControllerProvider);
     expect(state.hasError, true);

@@ -5,6 +5,7 @@ import 'package:pair/features/auth/presentation/providers/auth_providers.dart';
 import 'package:pair/features/auth/presentation/screens/login_screen.dart';
 import 'package:pair/features/auth/presentation/screens/splash_screen.dart';
 import 'package:pair/features/chat/presentation/screens/chat_screen.dart';
+import 'package:pair/features/grocery/presentation/screens/grocery_screen.dart';
 import 'package:pair/features/home/presentation/screens/home_screen.dart';
 import 'package:pair/features/home/presentation/screens/main_shell.dart';
 import 'package:pair/features/location/presentation/screens/map_screen.dart';
@@ -41,7 +42,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           return RoutePaths.login;
         }
 
-        if (isAuthenticated && (isLogin || isSplash)) {
+        if (isAuthenticated && !user.hasRole && !isLogin) {
+          return RoutePaths.login;
+        }
+
+        if (isAuthenticated && user.hasRole && (isLogin || isSplash)) {
           return RoutePaths.home;
         }
 
@@ -85,6 +90,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.chat,
             pageBuilder: (context, state) => _fadePage(state, const ChatScreen()),
+          ),
+          GoRoute(
+            path: RoutePaths.grocery,
+            pageBuilder: (context, state) =>
+                _fadePage(state, const GroceryScreen()),
           ),
           GoRoute(
             path: RoutePaths.profile,

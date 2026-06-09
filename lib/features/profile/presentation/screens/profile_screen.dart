@@ -60,6 +60,15 @@ class ProfileScreen extends ConsumerWidget {
                   ),
             ),
           ),
+          if (user.role != null) ...[
+            const SizedBox(height: 8),
+            Center(
+              child: Chip(
+                avatar: const Icon(Icons.person_outline, size: 18),
+                label: Text(user.role!.label),
+              ),
+            ),
+          ],
           const SizedBox(height: 32),
           Card(
             child: Column(
