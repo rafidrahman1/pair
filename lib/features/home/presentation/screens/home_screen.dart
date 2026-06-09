@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pair/core/constants/app_constants.dart';
 import 'package:pair/core/theme/app_theme.dart';
 import 'package:pair/core/utils/date_formatter.dart';
 import 'package:pair/core/utils/distance_calculator.dart';
@@ -327,7 +328,8 @@ class _PeriodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = isWife ? 'Period (shared with spouse)' : 'Her period';
+    final codeWord = AppConstants.healthCodeWord;
+    final title = isWife ? '$codeWord (sharing with spouse)' : codeWord;
 
     if (periodData == null) {
       return Card(
@@ -349,8 +351,8 @@ class _PeriodCard extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 isWife
-                    ? 'Connect Health Connect and log period data to share with your spouse.'
-                    : 'Period data will appear here once your wife syncs from Health Connect.',
+                    ? 'Connect Health Connect to sync $codeWord updates with your spouse.'
+                    : '$codeWord updates will appear once synced from Health Connect.',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
@@ -359,7 +361,8 @@ class _PeriodCard extends StatelessWidget {
       );
     }
 
-    final statusText = periodData!.isOnPeriod ? 'On period' : 'Not on period';
+    final statusText =
+        periodData!.isOnPeriod ? '$codeWord active' : '$codeWord clear';
     final flowText = _formatFlow(periodData!.currentFlow);
 
     return Card(
@@ -388,14 +391,14 @@ class _PeriodCard extends StatelessWidget {
             if (flowText != null) ...[
               const SizedBox(height: 4),
               Text(
-                'Flow: $flowText',
+                'Level: $flowText',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
             if (periodData!.lastPeriodStart != null) ...[
               const SizedBox(height: 4),
               Text(
-                'Cycle started ${DateFormatter.relative(periodData!.lastPeriodStart!)}',
+                'Started ${DateFormatter.relative(periodData!.lastPeriodStart!)}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

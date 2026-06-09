@@ -3,6 +3,9 @@ class AppConstants {
 
   static const String appName = 'Pair';
 
+  /// Discreet label shown in the UI instead of explicit health terms.
+  static const String healthCodeWord = 'Phoenix';
+
   static const Duration pairCodeExpiration = Duration(minutes: 10);
   static const Duration foregroundLocationInterval = Duration(seconds: 30);
   static const Duration typingIndicatorTimeout = Duration(seconds: 3);
