@@ -25,7 +25,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final controllerAuth = ref.read(authControllerProvider);
 
       final user = streamAuth.valueOrNull ?? controllerAuth.valueOrNull;
-      final isLoading = streamAuth.isLoading && controllerAuth.isLoading;
+      final isLoading = streamAuth.isLoading || controllerAuth.isLoading;
       final isAuthenticated = user != null;
       final location = state.matchedLocation;
 

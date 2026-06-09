@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pair/core/providers/firebase_providers.dart';
+import 'package:pair/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:pair/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:pair/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:pair/features/auth/domain/entities/user_entity.dart';
@@ -8,6 +9,10 @@ import 'package:pair/features/auth/domain/repositories/auth_repository.dart';
 import 'package:pair/features/auth/domain/usecases/get_current_user.dart';
 import 'package:pair/features/auth/domain/usecases/sign_in_with_google.dart';
 import 'package:pair/features/auth/domain/usecases/sign_out.dart';
+
+final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
+  return AuthLocalDataSource();
+});
 
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSource(
@@ -18,7 +23,10 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepositoryImpl(ref.watch(authRemoteDataSourceProvider));
+  return AuthRepositoryImpl(
+    ref.watch(authRemoteDataSourceProvider),
+    ref.watch(authLocalDataSourceProvider),
+  );
 });
 
 final signInWithGoogleProvider = Provider<SignInWithGoogle>((ref) {
@@ -40,8 +48,9 @@ final currentUserStreamProvider = StreamProvider<UserEntity?>((ref) {
 class AuthController extends AsyncNotifier<UserEntity?> {
   @override
   Future<UserEntity?> build() async {
+    final cached = await ref.read(authLocalDataSourceProvider).getCachedUser();
     final result = await ref.read(getCurrentUserProvider)();
-    return result.fold((_) => null, (user) => user);
+    return result.fold((_) => cached, (user) => user);
   }
 
   Future<void> signInWithGoogle({required UserRole role}) async {
@@ -61,7 +70,10 @@ class AuthController extends AsyncNotifier<UserEntity?> {
     final result = await ref.read(signOutProvider)();
     state = result.fold(
       (failure) => AsyncError(failure, StackTrace.current),
-      (_) => const AsyncData(null),
+      (_) {
+        ref.invalidate(currentUserStreamProvider);
+        return const AsyncData(null);
+      },
     );
   }
 }

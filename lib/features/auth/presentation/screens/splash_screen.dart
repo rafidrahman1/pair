@@ -29,7 +29,7 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final streamAuth = ref.watch(currentUserStreamProvider);
     final controllerAuth = ref.watch(authControllerProvider);
-    final isLoading = streamAuth.isLoading && controllerAuth.isLoading;
+    final isLoading = streamAuth.isLoading || controllerAuth.isLoading;
     final resolvedUser = streamAuth.valueOrNull ?? controllerAuth.valueOrNull;
 
     ref.listen(currentUserStreamProvider, (previous, next) {
