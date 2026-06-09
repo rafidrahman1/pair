@@ -22,7 +22,6 @@ class LocationService with WidgetsBindingObserver {
   final Duration _foregroundInterval;
 
   Timer? _foregroundTimer;
-  bool _isForeground = true;
   bool _running = false;
 
   /// Hook for background location tracking integration.
@@ -55,22 +54,15 @@ class LocationService with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    _isForeground = state == AppLifecycleState.resumed;
-    if (_isForeground) {
-      _startForegroundTimer();
+    if (state == AppLifecycleState.resumed) {
       _publishCurrentLocation();
-    } else {
-      _foregroundTimer?.cancel();
-      _foregroundTimer = null;
     }
   }
 
   void _startForegroundTimer() {
     _foregroundTimer?.cancel();
     _foregroundTimer = Timer.periodic(_foregroundInterval, (_) {
-      if (_isForeground) {
-        _publishCurrentLocation();
-      }
+      _publishCurrentLocation();
     });
   }
 

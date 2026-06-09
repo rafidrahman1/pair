@@ -8,6 +8,7 @@ class AppConstants {
 
   static const Duration pairCodeExpiration = Duration(minutes: 10);
   static const Duration foregroundLocationInterval = Duration(seconds: 30);
+  static const double proximityNotifyMeters = 1000;
   static const Duration typingIndicatorTimeout = Duration(seconds: 3);
   static const Duration presenceHeartbeatInterval = Duration(seconds: 30);
 

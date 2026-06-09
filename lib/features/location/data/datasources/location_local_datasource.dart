@@ -1,6 +1,7 @@
 import 'package:battery_plus/battery_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pair/features/location/data/models/location_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationLocalDataSource {
   LocationLocalDataSource({
@@ -10,18 +11,28 @@ class LocationLocalDataSource {
   final Battery _battery;
 
   Future<bool> requestPermission() async {
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    return permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse;
+    if (!await _ensureWhenInUsePermission()) return false;
+    return _ensureAlwaysPermission();
   }
 
   Future<bool> isPermissionGranted() async {
-    final permission = await Geolocator.checkPermission();
-    return permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse;
+    return Permission.locationAlways.isGranted;
+  }
+
+  Future<bool> _ensureWhenInUsePermission() async {
+    var status = await Permission.locationWhenInUse.status;
+    if (status.isGranted) return true;
+
+    status = await Permission.locationWhenInUse.request();
+    return status.isGranted;
+  }
+
+  Future<bool> _ensureAlwaysPermission() async {
+    var status = await Permission.locationAlways.status;
+    if (status.isGranted) return true;
+
+    status = await Permission.locationAlways.request();
+    return status.isGranted;
   }
 
   Future<bool> isPermissionPermanentlyDenied() async {

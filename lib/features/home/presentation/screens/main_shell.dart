@@ -46,6 +46,7 @@ class _MainShellState extends ConsumerState<MainShell> {
   Widget build(BuildContext context) {
     ref.watch(presenceServiceLifecycleProvider);
     ref.watch(locationServiceLifecycleProvider);
+    ref.watch(proximityNotificationLifecycleProvider);
     ref.watch(groceryNotificationLifecycleProvider);
     ref.watch(chatNotificationLifecycleProvider);
     ref.watch(foregroundNotificationLifecycleProvider);

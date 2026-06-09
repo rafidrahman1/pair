@@ -30,7 +30,12 @@ class LocationRepositoryImpl implements LocationRepository {
             ),
           );
         }
-        return failure(const PermissionFailure('Location permission denied'));
+        return failure(
+          const PermissionFailure(
+            'Allow location "All the time" so Pair can share your location '
+            'and notify you when your spouse is nearby.',
+          ),
+        );
       }
       return success(true);
     } catch (e) {

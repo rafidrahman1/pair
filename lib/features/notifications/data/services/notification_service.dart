@@ -17,6 +17,7 @@ enum NotificationType {
   newGroceryItem,
   pairAccepted,
   spouseOnline,
+  spouseNearby,
 }
 
 class NotificationService {
@@ -243,6 +244,21 @@ class NotificationService {
         'itemId': itemId,
       }),
       dedupeKey: 'grocery_$itemId',
+    );
+  }
+
+  Future<void> notifySpouseNearby({
+    required String spouseName,
+    required String distanceText,
+    required String pairId,
+  }) async {
+    await showLocalNotification(
+      title: '$spouseName is nearby',
+      body: 'You are within $distanceText of each other',
+      payload: jsonEncode({
+        'type': 'spouse_nearby',
+        'pairId': pairId,
+      }),
     );
   }
 
